@@ -49,6 +49,85 @@ router.post("/auth", function (req, res, next) {
     });
 });
 
+router.post("/getbooking", function (req, res, next) {
+  var data = JSON.stringify({ confirmationId: req.body.confirmationId });
+
+  var config = {
+    method: "post",
+    url: "https://api-crt.cert.havail.sabre.com/v1/trip/orders/getBooking",
+    headers: {
+      "Content-Type": "application/json",
+      "Conversation-ID": "2020.04.DevStudio",
+      Authorization: `Bearer ${req.body.token}`,
+    },
+    data: data,
+  };
+
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+      res.send(response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send({ status: "error" });
+    });
+});
+
+router.post("/cancelbooking", function (req, res, next) {
+  var data = JSON.stringify({
+    confirmationId: req.body.confirmationId,
+    retrieveBooking: true,
+    cancelAll: true,
+    errorHandlingPolicy: "ALLOW_PARTIAL_CANCEL",
+  });
+
+  var config = {
+    method: "post",
+    url: "https://api-crt.cert.havail.sabre.com/v1/trip/orders/cancelBooking",
+    headers: {
+      "Content-Type": "application/json",
+      "Conversation-ID": "2020.04.DevStudio",
+      Authorization: `Bearer ${req.body.token}`,
+    },
+    data: data,
+  };
+
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+      res.send(response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send({ status: "error" });
+    });
+});
+
+router.post("/addseats", function (req, res, next) {
+  var data = `{{header}}\r\n\r\n<UpdatePassengerNameRecordRQ xmlns="http://services.sabre.com/sp/updatereservation/v1" version="1.0.0">\r\n    <Itinerary id="${req.body.confirmationId}"/>\r\n    <SpecialReqDetails>\r\n        <AirSeat>\r\n            <Seats>\r\n                <Seat NameNumber="1.1" Number="${req.body.seatNumber}" SegmentNumber="${req.body.segmentNumber}"/>\r\n            </Seats>\r\n        </AirSeat>\r\n    </SpecialReqDetails>\r\n    <PostProcessing>\r\n        <EndTransaction>\r\n            <Source ReceivedFrom="API TEST"/>\r\n        </EndTransaction>\r\n    </PostProcessing>\r\n</UpdatePassengerNameRecordRQ>\r\n\r\n{{footer}}`;
+
+  var config = {
+    method: "post",
+    url: "https://sws-crt.cert.havail.sabre.com",
+    headers: {
+      "Content-Type": "text/xml",
+      Authorization: `Bearer ${req.body.token}`,
+    },
+    data: data,
+  };
+
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+      res.send(response.data);
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.send({ status: "error" });
+    });
+});
+
 router.post("/book", function (req, res, next) {
   let outboundData =
     req.body.AirItinerary.OriginDestinationOptions.OriginDestinationOption[0]
