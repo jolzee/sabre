@@ -40,7 +40,6 @@ router.post("/auth", function (req, res, next) {
 
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data));
       res.send(response.data);
     })
     .catch(function (error) {
@@ -65,7 +64,6 @@ router.post("/getbooking", function (req, res, next) {
 
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data));
       res.send(response.data);
     })
     .catch(function (error) {
@@ -77,8 +75,8 @@ router.post("/getbooking", function (req, res, next) {
 router.post("/cancelbooking", function (req, res, next) {
   var data = JSON.stringify({
     confirmationId: req.body.confirmationId,
-    retrieveBooking: true,
-    cancelAll: true,
+    retrieveBooking: false,
+    cancelAll: false,
     errorHandlingPolicy: "ALLOW_PARTIAL_CANCEL",
   });
 
@@ -95,7 +93,6 @@ router.post("/cancelbooking", function (req, res, next) {
 
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data));
       res.send(response.data);
     })
     .catch(function (error) {
@@ -119,7 +116,6 @@ router.post("/addseats", function (req, res, next) {
 
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data));
       res.send(response.data);
     })
     .catch(function (error) {
@@ -389,14 +385,13 @@ router.post("/book", function (req, res, next) {
     headers: {
       "Content-Type": "application/json",
       "Conversation-ID": "2020.04.DevStudio",
-      Authorization: `Bearer ${body.token}`,
+      Authorization: `Bearer ${req.body.token}`,
     },
     data: data,
   };
 
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data));
       res.send(response.data);
     })
     .catch(function (error) {
@@ -487,11 +482,8 @@ router.post("/bargain-finder-max", function (req, res, next) {
     data: data,
   };
 
-  console.log(config);
-
   axios(config)
     .then(function (response) {
-      console.log(JSON.stringify(response.data));
       res.send(response.data);
     })
     .catch(function (error) {
